@@ -1,253 +1,49 @@
 "use client"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { 
-  ArrowUpRight, 
-  ArrowDownRight, 
-  Play, 
-  Pause, 
-  Clock, 
-  DollarSign,
-  Cpu,
-  FileCode,
-  Workflow,
-  Plus
-} from "lucide-react"
-import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { ArrowRight, CheckCircle2, CircleDot, ExternalLink, FileText, FolderKanban, Network, Plus, Search, ShieldCheck, Sparkles } from "lucide-react"
 
-const stats = [
-  {
-    name: "Active Pipelines",
-    value: "12",
-    change: "+2",
-    changeType: "increase",
-    icon: Workflow,
-  },
-  {
-    name: "Scripts Executed",
-    value: "1,847",
-    change: "+23%",
-    changeType: "increase",
-    icon: FileCode,
-  },
-  {
-    name: "API Calls",
-    value: "45.2K",
-    change: "+12%",
-    changeType: "increase",
-    icon: Cpu,
-  },
-  {
-    name: "Total Cost",
-    value: "$127.43",
-    change: "-8%",
-    changeType: "decrease",
-    icon: DollarSign,
-  },
+const assets = [
+  { title: "DNA Cold Case AI", eyebrow: "The whale", description: "15 proprietary innovations, strategy, and market analysis ready for protection.", status: "Patent pending ready", value: "$100M+ exit path", icon: ShieldCheck, color: "text-fuchsia-300", border: "border-fuchsia-400/30", bg: "bg-fuchsia-400/10" },
+  { title: "AI Empire Course", eyebrow: "Fast cash", description: "Production-ready audio, video, and a 4-hour NotebookLM course.", status: "Production ready", value: "$25k–$50k / mo", icon: Sparkles, color: "text-amber-300", border: "border-amber-400/30", bg: "bg-amber-400/10" },
+  { title: "Python Automation", eyebrow: "The engine", description: "1,425 content-aware scripts across SEO, scraping, and POD.", status: "Cataloged", value: "$10k–$40k / mo", icon: FolderKanban, color: "text-cyan-300", border: "border-cyan-400/30", bg: "bg-cyan-400/10" },
+  { title: "Music & Content", eyebrow: "The passive", description: "696MB of distribution-ready tracks for platforms and sync licensing.", status: "Distribution ready", value: "$15k–$65k / mo", icon: Network, color: "text-emerald-300", border: "border-emerald-400/30", bg: "bg-emerald-400/10" },
 ]
 
-const recentPipelines = [
-  { id: 1, name: "Content Processor", status: "running", progress: 67, tasks: "2,341 / 3,500" },
-  { id: 2, name: "Image Upscaler", status: "completed", progress: 100, tasks: "500 / 500" },
-  { id: 3, name: "LLM Batch Runner", status: "paused", progress: 45, tasks: "890 / 2,000" },
-  { id: 4, name: "Audio Transcriber", status: "queued", progress: 0, tasks: "0 / 1,200" },
-]
-
-const usageData = [
-  { date: "Mon", calls: 4200, cost: 18.5 },
-  { date: "Tue", calls: 5800, cost: 24.2 },
-  { date: "Wed", calls: 4900, cost: 20.1 },
-  { date: "Thu", calls: 7200, cost: 31.5 },
-  { date: "Fri", calls: 6100, cost: 26.8 },
-  { date: "Sat", calls: 3200, cost: 14.2 },
-  { date: "Sun", calls: 2800, cost: 12.1 },
-]
-
-const recentActivity = [
-  { id: 1, action: "Pipeline completed", pipeline: "Image Upscaler", time: "2 min ago" },
-  { id: 2, action: "New script added", pipeline: "CSV Merger v2", time: "15 min ago" },
-  { id: 3, action: "API key rotated", pipeline: "OpenAI Production", time: "1 hour ago" },
-  { id: 4, action: "Pipeline started", pipeline: "Content Processor", time: "2 hours ago" },
-  { id: 5, action: "Cost alert triggered", pipeline: "LLM Batch Runner", time: "3 hours ago" },
-]
+const flow = ["Source worlds", "Provenance", "Extraction", "Source-aware chunks", "Embeddings", "Semantic index"]
 
 export function DashboardOverview() {
+  const [activeAsset, setActiveAsset] = useState(0)
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Dashboard</h1>
-          <p className="text-muted-foreground">Monitor your automation workflows and usage.</p>
-        </div>
-        <Button className="bg-primary text-primary-foreground">
-          <Plus className="mr-2 h-4 w-4" />
-          New Pipeline
-        </Button>
-      </div>
-
-      {/* Stats Grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <Card key={stat.name}>
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                  <stat.icon className="h-5 w-5 text-primary" />
-                </div>
-                <div className={`flex items-center gap-1 text-xs font-medium ${
-                  stat.changeType === "increase" ? "text-emerald-500" : "text-rose-500"
-                }`}>
-                  {stat.changeType === "increase" ? (
-                    <ArrowUpRight className="h-3 w-3" />
-                  ) : (
-                    <ArrowDownRight className="h-3 w-3" />
-                  )}
-                  {stat.change}
-                </div>
-              </div>
-              <div className="mt-3">
-                <p className="text-2xl font-bold">{stat.value}</p>
-                <p className="text-sm text-muted-foreground">{stat.name}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Charts and Pipelines */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Usage Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle>API Usage</CardTitle>
-            <CardDescription>Your API calls and costs over the past week</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
-              <AreaChart data={usageData}>
-                <defs>
-                  <linearGradient id="colorCalls" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <XAxis 
-                  dataKey="date" 
-                  axisLine={false} 
-                  tickLine={false}
-                  tick={{ fontSize: 12, fill: 'var(--color-muted-foreground)' }}
-                />
-                <YAxis 
-                  axisLine={false} 
-                  tickLine={false}
-                  tick={{ fontSize: 12, fill: 'var(--color-muted-foreground)' }}
-                  tickFormatter={(value) => `${(value / 1000).toFixed(0)}K`}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: 'var(--color-card)',
-                    border: '1px solid var(--color-border)',
-                    borderRadius: '8px',
-                    fontSize: '12px',
-                  }}
-                  labelStyle={{ color: 'var(--color-foreground)' }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="calls"
-                  stroke="var(--color-primary)"
-                  strokeWidth={2}
-                  fill="url(#colorCalls)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Active Pipelines */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Active Pipelines</CardTitle>
-            <CardDescription>Currently running automation workflows</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {recentPipelines.map((pipeline) => (
-              <div key={pipeline.id} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-sm">{pipeline.name}</span>
-                    <Badge
-                      variant="outline"
-                      className={
-                        pipeline.status === "running"
-                          ? "border-emerald-500/50 text-emerald-500"
-                          : pipeline.status === "completed"
-                          ? "border-primary/50 text-primary"
-                          : pipeline.status === "paused"
-                          ? "border-yellow-500/50 text-yellow-500"
-                          : "border-muted-foreground/50 text-muted-foreground"
-                      }
-                    >
-                      {pipeline.status}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    {pipeline.status === "running" ? (
-                      <Button variant="ghost" size="icon" className="h-7 w-7">
-                        <Pause className="h-3 w-3" />
-                      </Button>
-                    ) : pipeline.status === "paused" ? (
-                      <Button variant="ghost" size="icon" className="h-7 w-7">
-                        <Play className="h-3 w-3" />
-                      </Button>
-                    ) : null}
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Progress value={pipeline.progress} className="h-2 flex-1" />
-                  <span className="text-xs text-muted-foreground whitespace-nowrap">
-                    {pipeline.tasks}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Recent Activity */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-          <CardDescription>Your latest automation events</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {recentActivity.map((activity) => (
-              <div
-                key={activity.id}
-                className="flex items-center justify-between border-b border-border pb-4 last:border-0 last:pb-0"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-2 w-2 rounded-full bg-primary" />
-                  <div>
-                    <p className="text-sm font-medium">{activity.action}</p>
-                    <p className="text-xs text-muted-foreground">{activity.pipeline}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Clock className="h-3 w-3" />
-                  {activity.time}
-                </div>
-              </div>
-            ))}
+    <div className="mx-auto max-w-7xl space-y-6 pb-10">
+      <section className="relative overflow-hidden rounded-2xl border border-border bg-card p-5 sm:p-8">
+        <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
+        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <div className="mb-4 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-primary"><CircleDot className="h-3.5 w-3.5" /> Empire command center</div>
+            <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">Turn the archive into an operating system.</h1>
+            <p className="mt-4 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">A source-aware map of your worlds, products, and implementation paths. Similarity is evidence—not a reason to delete, merge, or declare duplicates.</p>
           </div>
-        </CardContent>
-      </Card>
+          <div className="flex gap-2"><Button><Plus className="mr-2 h-4 w-4" /> Add source world</Button><Button variant="outline"><Search className="mr-2 h-4 w-4" /> Explore index</Button></div>
+        </div>
+      </section>
+
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {assets.map((asset, index) => {
+          const Icon = asset.icon
+          return <button key={asset.title} type="button" onClick={() => setActiveAsset(index)} className={`text-left transition-transform hover:-translate-y-0.5 ${activeAsset === index ? "ring-1 ring-primary" : ""}`}><Card className={`h-full ${asset.border}`}><CardContent className="p-5"><div className="flex items-start justify-between"><div className={`flex h-10 w-10 items-center justify-center rounded-xl ${asset.bg}`}><Icon className={`h-5 w-5 ${asset.color}`} /></div><Badge variant="outline" className="text-[10px]">{asset.status}</Badge></div><p className="mt-5 text-xs uppercase tracking-widest text-muted-foreground">{asset.eyebrow}</p><h2 className="mt-1 text-lg font-semibold">{asset.title}</h2><p className="mt-2 min-h-12 text-sm leading-5 text-muted-foreground">{asset.description}</p><div className={`mt-4 text-sm font-medium ${asset.color}`}>{asset.value}</div></CardContent></Card></button>
+        })}
+      </section>
+
+      <div className="grid gap-6 xl:grid-cols-[1.4fr_0.6fr]">
+        <Card><CardHeader><div className="flex items-center justify-between gap-4"><div><CardTitle>Source-aware intelligence pipeline</CardTitle><CardDescription>Observe how provenance becomes connected signal.</CardDescription></div><Badge variant="secondary">Live map</Badge></div></CardHeader><CardContent><div className="overflow-x-auto pb-2"><div className="flex min-w-[720px] items-center gap-2">{flow.map((step, index) => <div key={step} className="flex items-center gap-2"><div className={`rounded-xl border px-3 py-3 text-center ${index === flow.length - 1 ? "border-primary/50 bg-primary/10" : "border-border bg-secondary/50"}`}><p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">0{index + 1}</p><p className="mt-1 whitespace-nowrap text-xs font-medium">{step}</p></div>{index < flow.length - 1 && <ArrowRight className="h-4 w-4 shrink-0 text-primary" />}</div>)}</div></div><div className="mt-5 flex flex-wrap gap-2 text-xs text-muted-foreground"><span className="rounded-full border border-border px-3 py-1.5">Related-world paths</span><span className="rounded-full border border-border px-3 py-1.5">Semantic search</span><span className="rounded-full border border-border px-3 py-1.5">Lineage trails</span><span className="rounded-full border border-primary/30 bg-primary/5 px-3 py-1.5 text-primary">No deletion · no merging</span></div></CardContent></Card>
+
+        <Card><CardHeader><CardTitle>Next implementation</CardTitle><CardDescription>{assets[activeAsset].title} is selected.</CardDescription></CardHeader><CardContent><div className="rounded-xl border border-border bg-secondary/40 p-4"><p className="text-xs uppercase tracking-widest text-primary">Recommended move</p><h3 className="mt-2 text-xl font-semibold">{activeAsset === 0 ? "Secure the IP" : activeAsset === 1 ? "Package the course" : activeAsset === 2 ? "Bundle the scripts" : "Distribute the catalog"}</h3><p className="mt-2 text-sm leading-5 text-muted-foreground">Create the evidence trail, assign an owner, and move this asset from observed to activated.</p><Button className="mt-5 w-full">Open action brief <ExternalLink className="ml-2 h-4 w-4" /></Button></div><div className="mt-4 flex items-center gap-3 text-sm text-muted-foreground"><FileText className="h-4 w-4 text-primary" /> 4 source documents linked</div></CardContent></Card>
+      </div>
     </div>
   )
 }
